@@ -1,21 +1,24 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>Euler's Method</title>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
+<title>Numerical Analysis of Second Order Differential Equation</title>
+<script type="text/javascript" src="jquery.js"></script>
 <script language="javascript" type="text/javascript" src="flot/jquery.flot.js"></script>
 <script type="text/javascript">
 	//initial conditions
+	
+	/*
+		function for second derivative: 
+		
+	*/
+	
 	var x_initial = 0;
 	var y_initial = 2;
 	var limit = 1000;
 	
 	//arrays to hold data points
-	var euler1 = {label: "Euler's Estimation (dx = .05)", data: []};
-	var euler2 = {label: "Euler's Estimation (dx = .10)", data: []};
-	var euler3 = {label: "Euler's Estimation (dx = .15)", data: []};
-	var euler4 = {label: "Euler's Estimation (dx = .20)", data: []};
-	var euler5 = {label: "Euler's Estimation (dx = .25)", data: []};
+	var estimated_y = {label: "Approximation of Original Function", data: []};
+	var estimated_yprime = {label: "Approximation of Original Function's First Derivative", data: []};
 	var graph_f = {label: "Original Function", data: []}; //original function
 	
 	//define two functions: dy/dx as a function of x and y (differential equation) and y as a function of x (original function)
@@ -87,7 +90,7 @@ $(function () {
 	$('#graph').width(width - 50).height(height - 25);	
 	
 	//finally, plot all the data sets (original function and then all euler estimations)
-	$.plot($("#graph"), [ graph_f, euler1, euler2, euler3, euler4, euler5 ], options);
+	$.plot($("#graph"), [ graph_f, estimated_y, estimated_yprime ], options);
 });
 </script>
 </html>

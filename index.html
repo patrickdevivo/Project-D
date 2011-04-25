@@ -5,92 +5,90 @@
 <script type="text/javascript" src="jquery.js"></script>
 <script language="javascript" type="text/javascript" src="flot/jquery.flot.js"></script>
 <script type="text/javascript">
-	//initial conditions
-	
-	/*
-		function for second derivative: 
-		
-	*/
-	
-	var x_initial = 0;
-	var y_initial = 2;
-	var limit = 1000;
-	
-	//arrays to hold data points
-	var estimated_y = {label: "Approximation of Original Function", data: []};
-	var estimated_yprime = {label: "Approximation of Original Function's First Derivative", data: []};
-	var graph_f = {label: "Original Function", data: []}; //original function
-	
-	//define two functions: dy/dx as a function of x and y (differential equation) and y as a function of x (original function)
-	f_prime = function f_prime(x, y) {
-		return Math.pow(x,2)/Math.pow(y,2); //differential equation is dy/dx = x^2/y^2
-	}
-	
-	f_original = function f_original(x) {
-		var under_cube_root = Math.pow(x,3) + 8; //x cubed plus 8
-		return Math.pow(under_cube_root, 1/3); //cube root of above
-	}
-	
-	//graph original function
-	i=0
-	while(i<=1.1) {
-		graph_f.data.push([i, f_original(i)]); //draw graph
-		i = i+.01;
-	}
-		
-	//outer loop iterates five times for each estimation
-	for (k=1;k<=5;k++) {
-		dx = k*.05; //dx increases by .05 for each estimation
-		euler = "euler" + k; //the name of the array (from above) to hold data for each iteration
-		
-		//inner loop generates data points for each of the five estimations
-		for (i=0;i<=limit;i++) {
-			//reset initial condition before generating data in each estimation
-			if(i === 0) {
-				x = x_initial;
-				y = y_initial;
-			}
-			//the estimation logic
-			m = f_prime(x, y); //slope
-			x = dx + x; //new x value
-			y = y + m*dx; //new y value
-			eval(euler).data.push([x,y]); //add to the estimation array (for storing)
-		}	
-	}
+     
+    var x_initial = 0;
+    var y_initial = 0;
+    var y_prime_initial = 0;
+    var delta_x = 1;
+    var limit = 100;
+     
+    //arrays to hold data points
+    var graph_y = {label: "Approximation of Original Function (y)", data: []};
+    var graph_y_prime = {label: "Approximation of Original Function's First Derivative (y')", data: []};
+    var graph_f = {label: "Original Function", data: []};
+     
+
+    y_double_prime = function y_double_prime(x, y, y_prime) {
+		return 5*x;
+    }
+     
+    y_original = function y_original(x) {
+		return (5/6)*x*x*x;
+    }
+ 
+    
+    for(i=0;i<=limit;i++) {
+    	x = i*delta_x;
+    	y = y_original(x);
+    	graph_f.data.push([x, y]);
+    }
+    
+    var x, y, z;
+    for(i=0;i<=limit;i++) {
+    	if (i===0) {
+    		x = x_initial;
+    		y = y_initial;
+    		z = y_prime_initial;
+    	}
+    	else {
+    		x = i*delta_x;
+    		delta_y = z*delta_x;
+    		y = y + delta_y;
+    		delta_z = y_double_prime(x, y, z)*delta_x;
+    		z = z + delta_z;
+    	}
+    	graph_y.data.push([x, y]);
+    	graph_y_prime.data.push([x, z]);
+    	
+    }
+    
+    
+         
+
 </script>
 </head>
 <body>
 <div id="graph" style="width:100px;height:100px"></div>
 </body>
-
+ 
 <script type="text/javascript">
 //Settings for graph
 $(function () {
-	var options = {
-		yaxis: {
-			max: 2.08,	
-		},
-		xaxis: {
-			max: 1	
-		},
-		series: {
+    var options = {
+        yaxis: {
+            //max: 2.08,  
+        },
+        xaxis: {
+            //max: 1 
+        },
+        series: {
             lines: { show: true, lineWidth: 2 },
-			points: { show: true, radius: 2 },
-			shadowSize: 1,
+            points: { show: true, radius: 2 },
+            shadowSize: 1,
         },
         legend: {
-        	show: true,
-        	position: 'nw',
-        }
-	}
-	
-	//adjust graph to fit window
-	width = $(window).width();
-	height = $(window).height();	
-	$('#graph').width(width - 50).height(height - 25);	
-	
-	//finally, plot all the data sets (original function and then all euler estimations)
-	$.plot($("#graph"), [ graph_f, estimated_y, estimated_yprime ], options);
+            show: true,
+            position: 'nw',
+        },
+    }
+     
+    //adjust graph to fit window
+    width = $(window).width();
+    height = $(window).height();    
+    $('#graph').width(width - 50).height(height - 25);  
+     
+    //finally, plot all the data sets (original function and then all euler estimations)
+    $.plot($("#graph"), [ graph_f, graph_y_prime, graph_y ], options);
 });
 </script>
 </html>

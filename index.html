@@ -7,9 +7,9 @@
 <script type="text/javascript">
      
     var x_initial = 0;
-    var y_initial = 0;
-    var y_prime_initial = 0;
-    var delta_x = 1;
+    var y_initial = 1/3;
+    var y_prime_initial = 2;
+    var delta_x = .01;
     var limit = 100;
      
     //arrays to hold data points
@@ -19,11 +19,11 @@
      
 
     y_double_prime = function y_double_prime(x, y, y_prime) {
-		return 5*x;
+		return (-64)*y;
     }
      
     y_original = function y_original(x) {
-		return (5/6)*x*x*x;
+		return (5/12)*Math.sin(8*x+0.9274);
     }
  
     
@@ -47,14 +47,12 @@
     		delta_z = y_double_prime(x, y, z)*delta_x;
     		z = z + delta_z;
     	}
+    	//console.log(x + '|' + y);
+    	
     	graph_y.data.push([x, y]);
-    	graph_y_prime.data.push([x, z]);
+    	//graph_y_prime.data.push([x, z]);
     	
     }
-    
-    
-         
-
 </script>
 </head>
 <body>
@@ -66,19 +64,19 @@
 $(function () {
     var options = {
         yaxis: {
-            //max: 2.08,  
+            //max: 100,  
         },
         xaxis: {
-            //max: 1 
+			//max: 5,
         },
         series: {
             lines: { show: true, lineWidth: 2 },
-            points: { show: true, radius: 2 },
+            points: { show: true, radius: 1 },
             shadowSize: 1,
         },
         legend: {
             show: true,
-            position: 'nw',
+            position: 'se',
         },
     }
      
@@ -87,7 +85,6 @@ $(function () {
     height = $(window).height();    
     $('#graph').width(width - 50).height(height - 25);  
      
-    //finally, plot all the data sets (original function and then all euler estimations)
     $.plot($("#graph"), [ graph_f, graph_y_prime, graph_y ], options);
 });
 </script>

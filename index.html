@@ -7,8 +7,8 @@
 <script type="text/javascript">
      
     var x_initial = 0;
-    var y_initial = 1/3;
-    var y_prime_initial = 2;
+    var y_initial = -2;
+    var y_prime_initial = 1;
     var delta_x = .01;
     var limit = 100;
      
@@ -19,11 +19,13 @@
      
 
     y_double_prime = function y_double_prime(x, y, y_prime) {
-		return (-64)*y;
+		return (8*y_prime-145*y)/16;
     }
      
     y_original = function y_original(x) {
-		return (5/12)*Math.sin(8*x+0.9274);
+		var e = Math.E;
+		var pow = x/4;
+		return (-2*Math.pow(e, pow))*(Math.cos(3*x)) + (1/2)*(Math.pow(e, pow)*Math.sin(3*x));
     }
  
     

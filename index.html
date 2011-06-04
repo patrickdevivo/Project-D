@@ -5,10 +5,11 @@
 <script type="text/javascript" src="jquery.js"></script>
 <script language="javascript" type="text/javascript" src="flot/jquery.flot.js"></script>
 <script type="text/javascript">
-     
+    
+    //initialize
     var x_initial = 0;
-    var y_initial = -2;
-    var y_prime_initial = 1;
+    var y_initial = (1/3);
+    var y_prime_initial = 0;
     var delta_x = .01;
     var limit = 100;
      
@@ -19,13 +20,11 @@
      
 
     y_double_prime = function y_double_prime(x, y, y_prime) {
-		return (8*y_prime-145*y)/16;
+		return -64*y;
     }
      
     y_original = function y_original(x) {
-		var e = Math.E;
-		var pow = x/4;
-		return (-2*Math.pow(e, pow))*(Math.cos(3*x)) + (1/2)*(Math.pow(e, pow)*Math.sin(3*x));
+		return (1/3)*Math.cos(8*x);
     }
  
     
@@ -37,6 +36,7 @@
     
     var x, y, z;
     for(i=0;i<=limit;i++) {
+    	//make sure initial conditions are met...
     	if (i===0) {
     		x = x_initial;
     		y = y_initial;
@@ -55,10 +55,87 @@
     	//graph_y_prime.data.push([x, z]);
     	
     }
+    
+    function animation() {
+    	//this loop first finds the min and max values of the original function
+		len = graph_f.data.length
+		for(i=0; i<len; i++) {
+			if(i===0) {
+				min = max = graph_f.data[0][x];
+			}
+			if(graph_f.data[i][x] > max) {
+				max = graph_f.data[i][x];
+			}
+			if(graph_f.data[i][x] < min) {
+				min = graph_f.data[i][x];
+			}
+		}
+		//console.log(min + " " + max);
+		
+		total_difference = Math.abs(max - min);
+		//console.log(difference);
+		
+		function percent(current) {
+			//return 100*(current/total_difference);
+			difference = current - min;
+			return (difference/total_difference)*100;
+		}
+		
+		for(i=0; i<len; i++) {
+			current = graph_f.data[i][x];
+			//console.log(current + " " + percent(current));
+			
+			percent_out = percent(current) + '%';
+			
+			
+			$('#block').animate({
+				left: percent_out
+			}, 100, 'linear'
+			);
+			
+			if(i===0) {
+				$('#block').fadeIn();
+			}
+			
+		}
+		
+    }
+    
+    
 </script>
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{border:0;font-size:100%;font:inherit;vertical-align:baseline;margin:0;padding:0}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:none}table{border-collapse:collapse;border-spacing:0}
+
+body {
+	padding: 5px 0 0 5px;
+}
+
+#track {
+	position: relative;
+	background: #ccc;
+	height: 100px;
+	margin: 10px;
+	/* overflow: hidden; */
+}
+
+#block {
+	width: 1px;
+	height: 100px;
+	position: absolute;
+	background: #000;
+	display: none;
+}
+
+</style>
+
 </head>
 <body>
 <div id="graph" style="width:100px;height:100px"></div>
+
+<div id="track">
+	<div id="block"></div>
+</div>
+
 </body>
  
 <script type="text/javascript">
@@ -83,11 +160,16 @@ $(function () {
     }
      
     //adjust graph to fit window
-    width = $(window).width();
+    width = $(window).width() - 70;
     height = $(window).height();    
-    $('#graph').width(width - 50).height(height - 25);  
+    $('#graph').width(width).height(height); 
+    $('#track').width(width);
      
     $.plot($("#graph"), [ graph_f, graph_y_prime, graph_y ], options);
+    
+    $('#track').click(function() {
+    	animation();
+    });
 });
 </script>
 </html>

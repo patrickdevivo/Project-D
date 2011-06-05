@@ -10,7 +10,7 @@
     var x_initial = 0;
     var y_initial = (1/3);
     var y_prime_initial = 0;
-    var delta_x = .01;
+    var delta_x = .02;
     var limit = 100;
      
     //arrays to hold data points
@@ -18,24 +18,26 @@
     var graph_y_prime = {label: "Approximation of Original Function's First Derivative (y')", data: []};
     var graph_f = {label: "Original Function", data: []};
      
-
+	//define differential equation
     y_double_prime = function y_double_prime(x, y, y_prime) {
 		return -64*y;
     }
-     
+    
+    //define solution 
     y_original = function y_original(x) {
 		return (1/3)*Math.cos(8*x);
     }
  
-    
-    for(i=0;i<=limit;i++) {
+    //graph original function
+    for(i=0;i<limit;i++) {
     	x = i*delta_x;
     	y = y_original(x);
     	graph_f.data.push([x, y]);
     }
     
+  	//approximate and graph original function
+    for(i=0;i<limit;i++) {
     var x, y, z;
-    for(i=0;i<=limit;i++) {
     	//make sure initial conditions are met...
     	if (i===0) {
     		x = x_initial;
@@ -43,37 +45,38 @@
     		z = y_prime_initial;
     	}
     	else {
-    		x = i*delta_x;
-    		delta_y = z*delta_x;
-    		y = y + delta_y;
-    		delta_z = y_double_prime(x, y, z)*delta_x;
+    		x = i*delta_x; //x is the index times the step siz
+    		delta_y = z*delta_x; //change in y is the second derivative z times the step size (z is slope of y and by definition is change in y over change in x = delta_y/delta_x, therefore to find delta_y, multiply delta_x by slope of y z).
+    		y = y + delta_y; //should be straightforward, previous value of y + change in y is next y value
+    		delta_z = y_double_prime(x, y, z)*delta_x; //change in y' is y'' times change in x by definition of slope (see 2 lines up)
     		z = z + delta_z;
     	}
     	//console.log(x + '|' + y);
     	
-    	graph_y.data.push([x, y]);
-    	//graph_y_prime.data.push([x, z]);
+    	graph_y.data.push([x, y]); //store it
+    	//graph_y_prime.data.push([x, z]); //graph of y' - sometimes interesting to see
     	
     }
     
     function animation() {
     	//this loop first finds the min and max values of the original function
-		len = graph_f.data.length
+		len = graph_y.data.length;
+
 		for(i=0; i<len; i++) {
 			if(i===0) {
-				min = max = graph_f.data[0][x];
+				min = max = graph_y.data[0][0];
 			}
-			if(graph_f.data[i][x] > max) {
-				max = graph_f.data[i][x];
+			if(graph_y.data[i][1] > max) {
+				max = graph_y.data[i][1];
 			}
-			if(graph_f.data[i][x] < min) {
-				min = graph_f.data[i][x];
+			if(graph_y.data[i][1] < min) {
+				min = graph_y.data[i][1];
 			}
 		}
-		//console.log(min + " " + max);
+		console.log("Min and Max " + min + " " + max);
 		
 		total_difference = Math.abs(max - min);
-		//console.log(difference);
+		console.log(total_difference);
 		
 		function percent(current) {
 			//return 100*(current/total_difference);
@@ -82,8 +85,8 @@
 		}
 		
 		for(i=0; i<len; i++) {
-			current = graph_f.data[i][x];
-			//console.log(current + " " + percent(current));
+			current = graph_y.data[i][1];
+			console.log(current + " " + percent(current));
 			
 			percent_out = percent(current) + '%';
 			
@@ -96,6 +99,10 @@
 			if(i===0) {
 				$('#block').fadeIn();
 			}
+			if(i===(len-1)) {
+				$('#block').fadeOut();
+			}
+
 			
 		}
 		

@@ -10,7 +10,7 @@
     var x_initial = 0;
     var y_initial = (1/3);
     var y_prime_initial = 0;
-    var delta_x = .02;
+    var delta_x = .01;
     var limit = 100;
      
     //arrays to hold data points
@@ -18,14 +18,16 @@
     var graph_y_prime = {label: "Approximation of Original Function's First Derivative (y')", data: []};
     var graph_f = {label: "Original Function", data: []};
      
-	//define differential equation
+	//define second order differential equation
     y_double_prime = function y_double_prime(x, y, y_prime) {
-		return -64*y;
+		//return -64*y; // app 1: simple harmonic motion w no friction
+		return -8*y_prime - 64*y // app 2: w friction
     }
     
     //define solution 
     y_original = function y_original(x) {
-		return (1/3)*Math.cos(8*x);
+		//return (1/3)*Math.cos(8*x); // app 1: simple harmonic motion w no friction
+		return (2*Math.sqrt(3)/9)*Math.pow(Math.E, -4*x)*Math.sin(4*Math.sqrt(3)*x + (Math.PI)/3) // app 2: w friction
     }
  
     //graph original function
@@ -45,7 +47,7 @@
     		z = y_prime_initial;
     	}
     	else {
-    		x = i*delta_x; //x is the index times the step siz
+    		x = i*delta_x; //x is the index times the step size
     		delta_y = z*delta_x; //change in y is the second derivative z times the step size (z is slope of y and by definition is change in y over change in x = delta_y/delta_x, therefore to find delta_y, multiply delta_x by slope of y z).
     		y = y + delta_y; //should be straightforward, previous value of y + change in y is next y value
     		delta_z = y_double_prime(x, y, z)*delta_x; //change in y' is y'' times change in x by definition of slope (see 2 lines up)
@@ -73,7 +75,7 @@
 				min = graph_y.data[i][1];
 			}
 		}
-		console.log("Min and Max " + min + " " + max);
+		//console.log("Min and Max " + min + " " + max);
 		
 		total_difference = Math.abs(max - min);
 		console.log(total_difference);
